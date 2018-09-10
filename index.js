@@ -21,6 +21,7 @@ const jwtStrategy = require('./passport/jwt');
 
 // Create an Express application
 const app = express();
+app.use(express.json());
 
 app.use(
   morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
@@ -35,8 +36,7 @@ app.use(
 );
 
 // Parse request body
-app.use(express.json());
-app.use('/api', authRouter);
+app.use('/api/auth', authRouter);
 
 passport.use(localStrategy);
 passport.use(jwtStrategy);
