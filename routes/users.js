@@ -95,7 +95,6 @@ router.post('/', (req, res, next) => {
     });
   }
 
-<<<<<<< HEAD
   //each username needs to be unique
   User.findOne({ 'username': username }).count().then(cnt => {
     if (cnt > 0) {
@@ -122,28 +121,6 @@ router.post('/', (req, res, next) => {
             err.status = 400;
           }
           next(err);
-=======
-  let {username, password, firstName = '', lastName = ''} = req.body;
-  // Username and password come in pre-trimmed, otherwise we throw an error
-  // before this
-
-  //console.log(firstName, lastName, '>>>>>>>>');
-  firstName = firstName.trim();
-  lastName = lastName.trim();
-
-  return User.find({username})
-    .count()
-    .then(count => {
-      if (count > 0) {
-        // There is an existing user with the same username
-        
-        return Promise.reject({
-          
-          code: 422,
-          reason: 'ValidationError',
-          message: 'Username already taken',
-          location: 'username'
->>>>>>> 7b808c6c18fd2266551877a0eb98c2d4f78fcc1b
         });
     };
   });
