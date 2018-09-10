@@ -25,7 +25,9 @@ userSchema.set('toObject', {
 userSchema.methods.serialize = function () {
   return {
     id: this._id,
-    username: this.username
+    username: this.username,
+    lastName: this.lastName,
+    firstName: this.firstname
   };
 };
 

@@ -107,7 +107,7 @@ router.post('/', (req, res, next) => {
           const newUser = {
             username,
             password: digest,
-            firstName,
+            firstname: firstName,
             lastName
           };
           return User.create(newUser);
