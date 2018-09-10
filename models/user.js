@@ -2,11 +2,12 @@
 
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 
 // ===== Define UserSchema & UserModel =====
 const userSchema = new mongoose.Schema({
-  firstname: { type: String, default: '' },
-  lastName: { type: String, default: '' },
+  firstname: { type: String},
+  lastName: { type: String},
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true }
 });
@@ -20,6 +21,13 @@ userSchema.set('toObject', {
     delete ret.password;
   }
 });
+
+userSchema.methods.serialize = function () {
+  return {
+    id: this._id,
+    username: this.username
+  };
+};
 
 // Note: Use `function` (not an `arrow function`) to allow setting `this`
 userSchema.methods.validatePassword = function (pwd) {
