@@ -107,7 +107,6 @@ router.post('/', (req, res, next) => {
           const newUser = {
             username,
             password: digest,
-            symptoms: symptoms.split(','),
             firstName,
             lastName
           };
