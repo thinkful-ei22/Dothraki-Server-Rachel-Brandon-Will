@@ -10,6 +10,8 @@ const passport =  require('passport');
 // const questionsRouter = ('./routes/questions');
 const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
+const questionsRouter = require('./routes/question');
+const answerRouter = require('./routes/answer');
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
 const { dbConnect } = require('./db-mongoose');
@@ -41,7 +43,8 @@ passport.use(jwtStrategy);
 
 // Mount routers
 app.use('/api/users', usersRouter);
-
+app.use('/api/questions', questionsRouter);
+app.use('/api/answer', answerRouter);
 
 function runServer(port = PORT) {
   const server = app
