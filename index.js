@@ -10,6 +10,8 @@ const jwt = require('jsonwebtoken');
 // const questionsRouter = ('./routes/questions');
 const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
+const questionsRouter = require('./routes/question');
+const answerRouter = require('./routes/answer');
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
 const { dbConnect } = require('./db-mongoose');
@@ -42,7 +44,8 @@ app.use(
 // app.use('/api/questions', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
-
+app.use('/api/questions', questionsRouter);
+app.use('/api/answer', answerRouter);
 
 // app.get('/api/me', passport.authenticate('jwt', { session: false, failWithError: true }), (req, res) => {
 //   res.json({

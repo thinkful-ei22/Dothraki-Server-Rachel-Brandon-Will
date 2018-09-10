@@ -1,7 +1,7 @@
 'use strict';
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
-//const { JWT_SECRET } = require('../config');
-const JWT_SECRET = 'PURPLE_FRUIT;';
+const { JWT_SECRET } = require('../config');
+//const JWT_SECRET = 'PURPLE_FRUIT;';
 const options = {
   secretOrKey: JWT_SECRET,
   jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
