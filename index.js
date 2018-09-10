@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 // const questionsRouter = ('./routes/questions');
 const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
-const questionsRouter = require('./routes/question');
+const questionsRouter = require('./routes/questions');
 const answerRouter = require('./routes/answer');
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
