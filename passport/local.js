@@ -1,5 +1,6 @@
 'use strict';
 
+const passpoort = require('passport');
 const { Strategy: LocalStrategy } = require('passport-local');
 
 const  User = require('../models/user');
@@ -7,7 +8,6 @@ const  User = require('../models/user');
 // ===== Define and create basicStrategy =====
 const localStrategy = new LocalStrategy((username, password, done) => {
   let user;
-  console.log('Hello from local strategy');
   User.findOne({ username })
     .then(results => {
       user = results;
@@ -34,7 +34,6 @@ const localStrategy = new LocalStrategy((username, password, done) => {
     })
     .catch(err => {
       if (err.reason === 'LoginError') {
-        console.log('loginerror');
         return done(null, false);
       }
       return done(err);

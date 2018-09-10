@@ -1,18 +1,21 @@
 
 'use strict';
 const express = require('express');
-const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const  User  = require('../models/user');
 
 const router = express.Router();
 
-const jsonParser = bodyParser.json();
 
-// Post to register a new user
-router.post('/', jsonParser, (req, res) => {
-  console.log(req.body);
-  const requiredFields = ['username', 'password', 'firstName', 'lastName'];
+//Create User POST ENDPOINT
+
+router.post('/', (req, res, next) => {
+  
+
+  let { username, password, firstName, lastName } = req.body;
+  //all fields must exist
+  const requiredFields = ['username', 'password'];
   const missingField = requiredFields.find(field => !(field in req.body));
 
   if (missingField) {
@@ -22,8 +25,9 @@ router.post('/', jsonParser, (req, res) => {
       message: 'Missing field',
       location: missingField
     });
-  }
+  };
 
+  //all fields must be a string
   const stringFields = ['username', 'password', 'firstName', 'lastName'];
   const nonStringField = stringFields.find(
     field => field in req.body && typeof req.body[field] !== 'string'
@@ -38,13 +42,8 @@ router.post('/', jsonParser, (req, res) => {
     });
   }
 
-  // If the username and password aren't trimmed we give an error.  Users might
-  // expect that these will work without trimming (i.e. they want the password
-  // "foobar ", including the space at the end).  We need to reject such values
-  // explicitly so the users know what's happening, rather than silently
-  // trimming them and expecting the user to understand.
-  // We'll silently trim the other fields, because they aren't credentials used
-  // to log in, so it's less of a problem.
+//The username and password should not have leading or trailing whitespace. 
+  //And the endpoint should not automatically trim the values
   const explicityTrimmedFields = ['username', 'password'];
   const nonTrimmedField = explicityTrimmedFields.find(
     field => req.body[field].trim() !== req.body[field]
@@ -59,12 +58,13 @@ router.post('/', jsonParser, (req, res) => {
     });
   }
 
+  //The username is a minimum of 1 character, The password is a minimum of 8 and max of 72 characters
   const sizedFields = {
     username: {
       min: 1
     },
     password: {
-      min: 10,
+      min: 8,
       // bcrypt truncates after 72 characters, so let's not give the illusion
       // of security by storing extra (unused) info
       max: 72
@@ -73,12 +73,13 @@ router.post('/', jsonParser, (req, res) => {
   const tooSmallField = Object.keys(sizedFields).find(
     field =>
       'min' in sizedFields[field] &&
-            req.body[field].trim().length < sizedFields[field].min
+      req.body[field].trim().length < sizedFields[field].min
   );
+  
   const tooLargeField = Object.keys(sizedFields).find(
     field =>
       'max' in sizedFields[field] &&
-            req.body[field].trim().length > sizedFields[field].max
+      req.body[field].trim().length > sizedFields[field].max
   );
 
   if (tooSmallField || tooLargeField) {
@@ -94,67 +95,40 @@ router.post('/', jsonParser, (req, res) => {
     });
   }
 
-  let {username, password, firstName = '', lastName = ''} = req.body;
-  // Username and password come in pre-trimmed, otherwise we throw an error
-  // before this
-
-  console.log(firstName, lastName, '>>>>>>>>');
-  firstName = firstName.trim();
-  lastName = lastName.trim();
-
-  return User.find({username})
-    .count()
-    .then(count => {
-      if (count > 0) {
-        // There is an existing user with the same username
-        
-        return Promise.reject({
-          
-          code: 422,
-          reason: 'ValidationError',
-          message: 'Username already taken',
-          location: 'username'
+  //each username needs to be unique
+  User.findOne({ 'username': username }).count().then(cnt => {
+    if (cnt > 0) {
+      const err = new Error('username already exists');
+      err.status = 422;
+      return next(err);
+    } else { //else if no validation errors, create user
+      return User.hashPassword(password)
+        .then(digest => {
+          const newUser = {
+            username,
+            password: digest,
+            symptoms: symptoms.split(','),
+            firstName,
+            lastName
+          };
+          return User.create(newUser);
+        })
+        .then(user => {
+          return res.status(201).location(`/api/users/${user.id}`).json(user.serialize());
+        })
+        .catch(err => {
+          if (err.code === 11000) {
+            err = new Error('The username already exists');
+            err.status = 400;
+          }
+          next(err);
         });
-      }
-      // If there is no existing user, hash the password
-      
-      return User.hashPassword(password);
-    })
-    .then(hash => {
-      
-      return User.create({
-        username,
-        password: hash,
-        firstName,
-        lastName
-        
-      });
-    })
-    .then(user => {
-   
-      return res.status(201).json(user.serialize());
-    })
-    .catch(err => {
-      // Forward validation errors on to the client, otherwise give a 500
-      // error because something unexpected has happened
-      if (err.reason === 'ValidationError') {
-        return res.status(err.code).json(err);
-      }
-      res.status(500).json({code: 500, message: 'Internal server error'});
-    });
-});
-
-// Never expose all your users like below in a prod application
-// we're just doing this so we have a quick way to see
-// if we're creating users. keep in mind, you can also
-// verify this in the Mongo shell.
-router.get('/', (req, res) => {
-  return User.find()
-    .then(users => res.json(users.map(user => user.serialize())))
-    .catch(err => res.status(500).json({message: 'Internal server error'}));
+    };
+  });
 });
 
 module.exports = router;
+
 
 
 
