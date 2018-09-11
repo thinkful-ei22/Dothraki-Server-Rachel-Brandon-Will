@@ -1,59 +1,77 @@
-'use strict';
+
+use strict';
 
 const express = require('express');
 
 const router = express.Router();
-const passport =  require('passport');
-const Queue = require('../utils/queue-class');
 
 
-router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
+const questions = [
+  {
+    english: 'Do you ride well today?',
+    dothraki: 'Shieraki gori ha yeraan!',
+    next: 1
+  },
+  {
+    english: 'The stars are charging for you!',
+    dothraki: 'Shieraki gori ha yeraan!',
+    next: 2
+  },
+  {
+    english: 'my sun and stars',
+    dothraki: 'shekh ma shieraki anni',
+    next: 3
+  },
+  {
+    english: 'The moon of my life',
+    dothraki: 'jalan atthirari anni',
+    next: 4
+  }
+]
+
+const linkedList = new LinkedList();
+
+function insertWords(array){
+  for(let i = 0; i < array.length; i++){
+    linkedList.insertFirst(array[i]);
+
+  
+  }
+}
 
 
-const DothQ = new Queue();
+insertWords(questions);
 
-DothQ.enqueue({
-  question: 'The stars are charging for you!',
-  hint: 'The Dothraki word for "stars" is "shieraki"',
-  answer: 'Shieraki gori ha yeraan!'
+let curNode = linkedList.head;
+let prevNode= null;
+
+
+router.get('/',(req,res,next) =>{
+
+  if(curNode.next === null){
+    curNode = linkedList.head;
+  }
+  
+  let nodes ={
+    current: curNode.value,
+    previous: prevNode ? prevNode.value : {dothraki:'',english:''}
+  };
+
+  res.json(nodes);
 
 });
 
-DothQ.enqueue({
-  question: 'Are you speaking truthfully?',
-  hint: 'The Dothraki word for "truthfully" is "k’athijilari"',
-  answer: 'Hash yer asti k’athijilari?'
-    
+router.post('/',(req,res,next) =>{
+
+  // ??
+  // ??
+
+  prevNode=curNode;
+  curNode=curNode.next; 
+  res.json(curNode);
+
 });
-
-DothQ.enqueue({
-  question: 'Do you ride well today?',
-  hint: 'The Dothraki word for "ride" is "dothrae"',
-  answer: 'Hash yer dothrae chek asshekh?'
-        
-});
-
-DothQ.enqueue({
-  question: 'Happy Birthday!',
-  hint: 'The literal translation from Dothraki is "Great day of blood!"',
-  answer: 'Shieraki gori ha yeraan!'
-            
-});
-
-
-
-
-
-router.get('/', (req, res) => {
-  const nextQuestion = DothQ.dequeue();
-  DothQ.enqueue(nextQuestion);
-  return res.json(nextQuestion);
-
-//   let questions = req.user.questions.sort((a,b)=>{
-//     return a.score - b.score;
-//   });
-//   res.json(questions.slice(0,10));
-});
-
 
 module.exports = router;
+
+
