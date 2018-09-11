@@ -6,8 +6,8 @@ mongoose.Promise = global.Promise;
 
 // ===== Define UserSchema & UserModel =====
 const userSchema = new mongoose.Schema({
-  firstname: { type: String},
-  lastName: { type: String},
+  firstname: { type: String },
+  lastName: { type: String },
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true }
 });

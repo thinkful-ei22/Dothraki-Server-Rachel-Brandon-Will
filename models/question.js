@@ -1,21 +1,21 @@
 'use strict';
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-var QuestionSchema = new mongoose.Schema({
+const QuestionSchema = new mongoose.Schema({
     
-  prompt: {
-    type: String,
-    required: true
-  },
-  correctAnswer: {
-    type: String,
-    required: true
-  }
+  question: { type: String, required: true },
+  hint: { type: String, required: true },
+  answer: { type: String, required: true }
 
 });
 
-var Question = mongoose.model('Question', QuestionSchema);
+QuestionSchema.methods.serialize  = function () {
+  return {
+    id: this._id,
+    question: this.question,
+    hint: this.hint,
+    answer: this.answer
+  }
+}
 
-
-
-exports.Question = Question;
+module.exports = mongoose.model('Question', QuestionSchema);
