@@ -4,7 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const  User  = require('../models/user');
-
+const Questions = require('../models/question');
 const router = express.Router();
 
 
@@ -25,7 +25,7 @@ router.post('/', (req, res, next) => {
       message: 'Missing field',
       location: missingField
     });
-  };
+  }
 
   //all fields must be a string
   const stringFields = ['username', 'password', 'firstName', 'lastName'];
@@ -42,7 +42,7 @@ router.post('/', (req, res, next) => {
     });
   }
 
-//The username and password should not have leading or trailing whitespace. 
+  //The username and password should not have leading or trailing whitespace. 
   //And the endpoint should not automatically trim the values
   const explicityTrimmedFields = ['username', 'password'];
   const nonTrimmedField = explicityTrimmedFields.find(
@@ -96,23 +96,48 @@ router.post('/', (req, res, next) => {
   }
 
   //each username needs to be unique
+  let encryptedPassword = '';
+  // let memoryStrength = {};
+  let _next = {};
+  let memoryStrength;
+  //let _next;
   User.findOne({ 'username': username }).count().then(cnt => {
+    
     if (cnt > 0) {
       const err = new Error('username already exists');
       err.status = 422;
       return next(err);
     } else { //else if no validation errors, create user
+    
       return User.hashPassword(password)
-        .then(digest => {
+        .then(digest => { 
+          encryptedPassword = digest;
+          return Questions.find();
+        })
+        .then((questions) => {
+          //console.log('concosle.log questions', questions);
+          questions.map((question, index) => {
+            //console.log('indeces', index, question);
+            if(index !== questions.length -1 ){ 
+              question._next = index +1;
+            } else {
+              question._next = 0;
+            }
+            
+          });
+          //console.log('after next map', questions);
           const newUser = {
             username,
-            password: digest,
+            password: encryptedPassword,
             firstname: firstName,
-            lastName
+            lastName,
+            questions,
+            head: 0
           };
           return User.create(newUser);
         })
         .then(user => {
+         // console.log(user, '>>>>>>>>>>>USER');
           return res.status(201).location(`/api/users/${user.id}`).json(user.serialize());
         })
         .catch(err => {
@@ -122,7 +147,7 @@ router.post('/', (req, res, next) => {
           }
           next(err);
         });
-    };
+    }
   });
 });
 

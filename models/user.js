@@ -9,7 +9,23 @@ const userSchema = new mongoose.Schema({
   firstname: { type: String},
   lastName: { type: String},
   username: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
+  password: { type: String, required: true },
+
+  questions: [
+    {
+      _id: mongoose.Schema.Types.ObjectId,
+      question: String,
+      answer: String,
+      hint: String,
+      memoryStrength:{ type: Number, default: 2 }, 
+      _next: Number
+
+    }
+  ],
+  head: {
+    type: Number,
+    default: 0
+  }
 });
 
 // Customize output for `res.json(data)`, `console.log(data)` etc.
@@ -42,3 +58,27 @@ userSchema.statics.hashPassword = function (pwd) {
 };
 
 module.exports = mongoose.model('User', userSchema);
+
+
+// .then(digest => 
+//   encryptedPassword = digest
+  
+//   {
+//   const newUser = {
+//     username,
+//     password: digest,
+//     firstname: firstName,
+//     lastName
+//   };
+//   return User.create(newUser);
+// })
+// .then(user => {
+
+
+
+  // .then(questions => {
+  //   questions.map(_question => {
+  //     _question.memoryStrength = 2, 
+  //     _question._next = 0;
+  //   });
+   

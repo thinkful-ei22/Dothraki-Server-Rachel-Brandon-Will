@@ -3,19 +3,23 @@ var mongoose = require('mongoose');
 
 var QuestionSchema = new mongoose.Schema({
     
-  prompt: {
+  question: {
     type: String,
     required: true
   },
-  correctAnswer: {
+  hint: {
+    type: String
+  },
+  answer: {
     type: String,
     required: true
-  }
+  },
+  _next: { type: Number}
 
 });
 
-var Question = mongoose.model('Question', QuestionSchema);
+module.exports =  mongoose.model('Questions', QuestionSchema);
 
 
 
-exports.Question = Question;
+
