@@ -96,7 +96,7 @@ const router = express.Router();
 //const Queue = require('../utils/queue-class');
 //const User = require('../models/user');
 
-router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
+
 
 
 // const DothQ = new Queue();
@@ -130,15 +130,18 @@ router.use('/', passport.authenticate('jwt', { session: false, failWithError: tr
 // });
 
 // //let memoryStrength = 0;
-router.put('/:memoryStrength', (req, res, next) => {
 
-  const { id} = req.user;
+router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
+router.put('/:memoryStrength', (req, res, next) => {
+console.log(req.user, 'REQ.USER_________');
+  const { _id} = req.user;
   const memoryStrength  = req.params.memoryStrength;
 
   console.log('MEMORY STRENGTH', memoryStrength);
 
-  User.findById(id)
+  User.findById(_id)
     .then( user => {
+      console.log(user, 'USER+++++');
       console.log('HEAD++++++++', user.head);
       let head = user.head;
       let questionsArray = user.questions;
