@@ -1,5 +1,5 @@
 
-use strict';
+'use strict';
 
 const express = require('express');
 
@@ -61,16 +61,6 @@ router.get('/',(req,res,next) =>{
 
 });
 
-router.post('/',(req,res,next) =>{
-
-  // ??
-  // ??
-
-  prevNode=curNode;
-  curNode=curNode.next; 
-  res.json(curNode);
-
-});
 
 module.exports = router;
 
