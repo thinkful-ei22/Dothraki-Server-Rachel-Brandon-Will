@@ -3,15 +3,15 @@
 
 const mongoose = require('mongoose');
 
-const questionSchema = new mongoose.Schema({
+const questionSchema = mongoose.Schema({
   question: String,
   answer: String,
   hint: String,
   memoryStrength: Number,
   _next: Number
 });
-
-module.exports = mongoose.model('Question', questionSchema);
+const Question = mongoose.model('Question', questionSchema);
+module.exports = {Question};
 // var mongoose = require('mongoose');
 
 // var QuestionSchema = new mongoose.Schema({

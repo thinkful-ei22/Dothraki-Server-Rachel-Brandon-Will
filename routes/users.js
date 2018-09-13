@@ -4,7 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const  { User }  = require('../models/user');
-const Questions = require('../models/question');
+const {Question} = require('../models/question');
 const router = express.Router();
 
 
@@ -112,7 +112,7 @@ router.post('/', (req, res, next) => {
       return User.hashPassword(password)
         .then(digest => { 
           encryptedPassword = digest;
-          return Questions.find();
+          return Question.find();
         })
         .then((questions) => {
           //console.log('concosle.log questions', questions);
