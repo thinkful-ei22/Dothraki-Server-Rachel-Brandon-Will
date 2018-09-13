@@ -3,7 +3,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
-const  User  = require('../models/user');
+const  { User }  = require('../models/user');
 const Questions = require('../models/question');
 const router = express.Router();
 
@@ -98,8 +98,8 @@ router.post('/', (req, res, next) => {
   //each username needs to be unique
   let encryptedPassword = '';
   // let memoryStrength = {};
-  let _next = {};
-  let memoryStrength;
+  // let _next = {};
+  // let memoryStrength;
   //let _next;
   User.findOne({ 'username': username }).count().then(cnt => {
     
@@ -120,12 +120,16 @@ router.post('/', (req, res, next) => {
             //console.log('indeces', index, question);
             if(index !== questions.length -1 ){ 
               question._next = index +1;
+             
             } else {
               question._next = 0;
+              
             }
-            
+            question._index = index;
+            question.memoryStrength = 1;
           });
           //console.log('after next map', questions);
+          //console.log(questions, 'QUESTIONS JUST CREATED FOR USER');
           const newUser = {
             username,
             password: encryptedPassword,
@@ -134,6 +138,7 @@ router.post('/', (req, res, next) => {
             questions,
             head: 0
           };
+          //console.log('NEW USER+++++', newUser);
           return User.create(newUser);
         })
         .then(user => {
