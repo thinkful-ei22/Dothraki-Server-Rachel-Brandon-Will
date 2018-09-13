@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
 
   questions: [
     {
-      _id: mongoose.Schema.Types.ObjectId,
+      //_id: mongoose.Schema.Types.ObjectId,
       question: String,
       answer: String,
       hint: String,
