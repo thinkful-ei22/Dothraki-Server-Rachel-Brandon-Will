@@ -3,26 +3,67 @@
   "question": "The stars are charging for you!",
   "hint": "The Dothraki word for 'stars' is 'shieraki'",
   "answer": "Shieraki gori ha yeraan!",
-  "_next":0
+  "_next":0,
+  "_index":0,
+  "memoryStrength": 0
 },
 {
   "question": "Are you speaking truthfully?",
   "hint": "The Dothraki word for 'truthfully' is 'k’athijilari'",
   "answer": "Hash yer asti k’athijilari?",
-  "_next":0
+  "_next":0,
+  "_index":0,
+  "memoryStrength": 0
 }, 
 {
   "question": "Do you ride well today?",
   "hint": "The Dothraki word for 'ride' is 'dothrae'",
   "answer": "Hash yer dothrae chek asshekh?",
-  "_next":0
+  "_next":0,
+  "_index":0,
+  "memoryStrength": 0
 },
 {
   "question": "Happy Birthday!",
   "hint": "The literal translation from Dothraki is 'Great day of blood!'",
   "answer": "Shieraki gori ha yeraan!",
-  "_next":0
+  "_next":0,
+  "_index":0,
+  "memoryStrength": 0
+            
+},
+
+{
+  "question": "harvest moon",
+  "hint": "coming soon",
+  "answer": "jalan qoyi",
+  "_next":0,
+  "_index":0,
+  "memoryStrength": 0
+},
+ {
+  "question": "to dream",
+  "hint": "coming soon",
+  "answer": "thirat atthiraride",
+  "_next":0,
+  "_index":0,
+  "memoryStrength": 0
+}, 
+{
+  "question": "ship",
+  "hint": "coming soon",
+  "answer": "rhaggat eveth",
+  "_next":0,
+  "_index":0,
+  "memoryStrength": 0
+},
+{
+  "question": "that's good",
+  "hint": "coming soon",
+  "answer": "hazi devrae",
+  "_next":0,
+  "_index":0,
+  "memoryStrength": 0
             
 }
-
 ]

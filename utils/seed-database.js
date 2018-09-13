@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 const { DATABASE_URL } = require('../config');
-const User = require('../models/user');
+const { User} = require('../models/user');
 const Questions = require('../models/question');
 const seedQuestions =  require('../db/seed/questions');
 
