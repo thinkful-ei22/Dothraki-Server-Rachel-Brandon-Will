@@ -8,68 +8,154 @@ const {User} = require('../models/user');
 const {Question} = require('../models/question');
 const router = express.Router();
 
-//onst jsonParser = bodyParser.json();
+
+const jsonParser = bodyParser.json();
 
 
 //when /next endpoint is used, authenticate
 // then find the user with the correct username
 //find the first question for that user and display it
-// router.get(
-//   '/next',
-//   passport.authenticate('jwt', {session: false}),
-//   (req, res) => {
-//     User.findOne({
-//       username: req.user.username
-//     }).then(user => res.json(user.questions[user.head]));
-//   }
-// );
+router.get(
+  '/',
+  passport.authenticate('jwt', {session: false}),
+  (req, res) => {
+    User.findOne({
+      username: req.user.username
+    }).then(user => res.json(user.questions[user.head]));
+  }
+);
 
 // //added later - need to go through this code....
 // //when you add this you need to have head in user schema...
 
-// router.post(
-//   '/answer',
-//   [passport.authenticate('jwt', {session: false}), jsonParser],
-//   (req, res) => {
-//     User.findOne({
-//       username: req.user.username
-//     })
-//       .then(user => {
-//         const answeredQuestionIndex = user.head;
-//         const answeredQuestion = user.questions[answeredQuestionIndex];
-//         if (req.body.isCorrect) {
-//           user.score += 1;
-//           answeredQuestion.memoryStrength *= 2;
-//         } else {
-//           answeredQuestion.memoryStrength = 1;
-//         }
+router.post(
+  '/answer',
+  [passport.authenticate('jwt', {session: false}), jsonParser],
+  (req, res) => {
+    //console.log('running');
+    console.log(req.body.isCorrect, 'ISCORRECT SENT TO ENDPOINT');
+    User.findOne({
+      username: req.user.username
+    })
+      .then(user => {
+        //console.log('username', user);
+        console.log(user.head, '<<< user.head');
+        const answeredQuestionIndex = user.head;
+        //console.log(user.questions[answeredQuestionIndex], '<<<question at answeredIndex');
+        const answeredQuestion = user.questions[answeredQuestionIndex];
+        if (req.body.isCorrect) {
+          user.score += 1;
+          answeredQuestion.memoryStrength *= 2;
+        } else {
+          answeredQuestion.memoryStrength = 1;
+        }
+        // console.log(user.score, '<<<<user score');
+        // console.log(answeredQuestion, '<<<answeredQuestion');
 
-//         if (user.questions.length < 2) {
-//           return;
-//         }
 
-//         // Remove the answered question from the head
-//         user.head = answeredQuestion.next;
+        if (user.questions.length < 2) {
+          return;
+        }
 
-//         // Find the insertion point
-//         let currentQuestion = answeredQuestion;
-//         for (let i = 0; i < answeredQuestion.memoryStrength; i++) {
-//           const nextIndex = currentQuestion.next;
-//           if (nextIndex === null) {
-//             // We are inserting at the end
-//             break;
-//           }
+        // Remove the answered question from the head
+        console.log(answeredQuestion._next, '<<<next Question');
+        user.head = answeredQuestion._next;
 
-//           currentQuestion = user.questions[nextIndex];
-//         }
-//         // Insert the node
-//         answeredQuestion.next = currentQuestion.next;
-//         currentQuestion.next = answeredQuestionIndex;
-//         return user.save();
-//       })
-//       .then(() => res.status(200).json({}));
-//   }
-// );
+        // Find the insertion point
+        let currentQuestion = answeredQuestion;
+        for (let i = 0; i < answeredQuestion.memoryStrength; i++) {
+          const nextIndex = currentQuestion._next;
+          console.log(nextIndex , '<<<next Index');
+          if (nextIndex === null) {
+            // We are inserting at the end
+            break;
+          }
+
+          currentQuestion = user.questions[nextIndex];
+
+          console.log(currentQuestion, '<<< currentQuestion (in for loop)');
+        }
+        // Insert the node
+        answeredQuestion.next = currentQuestion.next;
+        currentQuestion.next = answeredQuestionIndex;
+        return user.save();
+      })
+      .then(() => res.status(200).json({}));
+  }
+);
+
+// 'use strict';
+
+// const express = require('express');
+// const bodyParser = require('body-parser');
+// const passport = require('passport');
+// const {User} = require('../models/user');
+
+// const {Question} = require('../models/question');
+// const router = express.Router();
+
+// //onst jsonParser = bodyParser.json();
+
+
+// //when /next endpoint is used, authenticate
+// // then find the user with the correct username
+// //find the first question for that user and display it
+// // router.get(
+// //   '/next',
+// //   passport.authenticate('jwt', {session: false}),
+// //   (req, res) => {
+// //     User.findOne({
+// //       username: req.user.username
+// //     }).then(user => res.json(user.questions[user.head]));
+// //   }
+// // );
+
+// // //added later - need to go through this code....
+// // //when you add this you need to have head in user schema...
+
+// // router.post(
+// //   '/answer',
+// //   [passport.authenticate('jwt', {session: false}), jsonParser],
+// //   (req, res) => {
+// //     User.findOne({
+// //       username: req.user.username
+// //     })
+// //       .then(user => {
+// //         const answeredQuestionIndex = user.head;
+// //         const answeredQuestion = user.questions[answeredQuestionIndex];
+// //         if (req.body.isCorrect) {
+// //           user.score += 1;
+// //           answeredQuestion.memoryStrength *= 2;
+// //         } else {
+// //           answeredQuestion.memoryStrength = 1;
+// //         }
+
+// //         if (user.questions.length < 2) {
+// //           return;
+// //         }
+
+// //         // Remove the answered question from the head
+// //         user.head = answeredQuestion.next;
+
+// //         // Find the insertion point
+// //         let currentQuestion = answeredQuestion;
+// //         for (let i = 0; i < answeredQuestion.memoryStrength; i++) {
+// //           const nextIndex = currentQuestion.next;
+// //           if (nextIndex === null) {
+// //             // We are inserting at the end
+// //             break;
+// //           }
+
+// //           currentQuestion = user.questions[nextIndex];
+// //         }
+// //         // Insert the node
+// //         answeredQuestion.next = currentQuestion.next;
+// //         currentQuestion.next = answeredQuestionIndex;
+// //         return user.save();
+// //       })
+// //       .then(() => res.status(200).json({}));
+// //   }
+// // );
 
 // router.get('/', (req, res) => {
 //   return Question.find()
