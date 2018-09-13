@@ -137,7 +137,7 @@ router.post('/', (req, res, next) => {
           return User.create(newUser);
         })
         .then(user => {
-         // console.log(user, '>>>>>>>>>>>USER');
+          // console.log(user, '>>>>>>>>>>>USER');
           return res.status(201).location(`/api/users/${user.id}`).json(user.serialize());
         })
         .catch(err => {
