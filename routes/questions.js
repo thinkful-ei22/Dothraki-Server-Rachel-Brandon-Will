@@ -46,12 +46,15 @@ router.post(
         //console.log(user.questions[answeredQuestionIndex], '<<<question at answeredIndex');
         const answeredQuestion = user.questions[answeredQuestionIndex];
         console.log('MEMORY STRENGTH BEFORE CHANGE:', answeredQuestion.memoryStrength);
+        console.log('Score BEFORE Changed:+++', user.score);
         if (req.body.isCorrect) {
           user.score += 1;
           answeredQuestion.memoryStrength *= 2;
         } else {
           answeredQuestion.memoryStrength = 1;
         }
+
+        console.log('Score after Changed:+++', user.score);
         console.log('MEMORY STRENGTH after CHANGE:', answeredQuestion.memoryStrength);
         // console.log(user.score, '<<<<user score');
         // console.log(answeredQuestion, '<<<answeredQuestion');
@@ -90,9 +93,10 @@ router.post(
 
         answeredQuestion._next = currentQuestion._next;
         currentQuestion._next = answeredQuestionIndex;
-        return user.save();
+         user.save();
+         return user;
       })
-      .then(() => res.status(200).json({}));
+      .then((user) => res.status(200).json({score: user.score}));
   }
 );
 
