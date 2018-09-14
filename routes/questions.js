@@ -93,10 +93,10 @@ router.post(
 
         answeredQuestion._next = currentQuestion._next;
         currentQuestion._next = answeredQuestionIndex;
-         user.save();
-         return user;
+        user.save();
+        return user;
       })
-      .then((user) => res.status(200).json({score: user.score}));
+      .then((user) => res.status(200).json({score:user.score}));
   }
 );
 
