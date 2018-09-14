@@ -15,6 +15,8 @@ const jsonParser = bodyParser.json();
 //when /next endpoint is used, authenticate
 // then find the user with the correct username
 //find the first question for that user and display it
+
+router.use(jsonParser);
 router.get(
   '/',
   passport.authenticate('jwt', {session: false}),
@@ -30,7 +32,7 @@ router.get(
 
 router.post(
   '/answer',
-  [passport.authenticate('jwt', {session: false}), jsonParser],
+  passport.authenticate('jwt', {session: false}),
   (req, res) => {
     //console.log('running');
     console.log(req.body.isCorrect, 'ISCORRECT SENT TO ENDPOINT');
