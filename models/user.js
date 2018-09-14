@@ -8,6 +8,8 @@ const userSchema = mongoose.Schema({
     required: true,
     unique: true
   },
+  firstName: String,
+  lastName: String,
   password: {
     type: String,
     required: true
@@ -42,7 +44,8 @@ const userSchema = mongoose.Schema({
 userSchema.methods.serialize = function () {
   return {
     id: this._id,
-    username: this.username
+    username: this.username,
+    fullName: this.firstName + this.lastName
    
   };
 };

@@ -80,7 +80,7 @@ router.post(
 
           //target = user.questions[nextIndex];
 
-//this changes the current question to the target
+          //this changes the current question to the target
           currentQuestion = user.questions[nextIndex];
 
           // console.log(currentQuestion, '<<< currentQuestion (in for loop)');
