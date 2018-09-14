@@ -22,7 +22,8 @@ const userSchema = mongoose.Schema({
       question: String,
       answer: String,
       memoryStrength: Number,
-      _next: Number
+      _next: Number,
+      hint: String
     }
   ],
   head: {
