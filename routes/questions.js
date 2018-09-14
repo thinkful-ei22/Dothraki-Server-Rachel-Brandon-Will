@@ -45,12 +45,14 @@ router.post(
         const answeredQuestionIndex = user.head;
         //console.log(user.questions[answeredQuestionIndex], '<<<question at answeredIndex');
         const answeredQuestion = user.questions[answeredQuestionIndex];
+        console.log('MEMORY STRENGTH BEFORE CHANGE:', answeredQuestion.memoryStrength);
         if (req.body.isCorrect) {
           user.score += 1;
           answeredQuestion.memoryStrength *= 2;
         } else {
           answeredQuestion.memoryStrength = 1;
         }
+        console.log('MEMORY STRENGTH after CHANGE:', answeredQuestion.memoryStrength);
         // console.log(user.score, '<<<<user score');
         // console.log(answeredQuestion, '<<<answeredQuestion');
 
@@ -65,6 +67,8 @@ router.post(
 
         // Find the insertion point
         let currentQuestion = answeredQuestion;
+        console.log(answeredQuestion.memoryStrength, 'ANSWERED DOT MEMORY');
+        
         for (let i = 0; i < answeredQuestion.memoryStrength; i++) {
           const nextIndex = currentQuestion._next;
           console.log(nextIndex , '<<<next Index');
@@ -73,13 +77,19 @@ router.post(
             break;
           }
 
+
+          //target = user.questions[nextIndex];
+
+//this changes the current question to the target
           currentQuestion = user.questions[nextIndex];
 
-          console.log(currentQuestion, '<<< currentQuestion (in for loop)');
+          // console.log(currentQuestion, '<<< currentQuestion (in for loop)');
         }
-        // Insert the node
-        answeredQuestion.next = currentQuestion.next;
-        currentQuestion.next = answeredQuestionIndex;
+        // aLex's code
+       
+
+        answeredQuestion._next = currentQuestion._next;
+        currentQuestion._next = answeredQuestionIndex;
         return user.save();
       })
       .then(() => res.status(200).json({}));
@@ -219,68 +229,68 @@ router.post(
 
 // //let memoryStrength = 0;
 
-router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
-router.put('/:memoryStrength', (req, res, next) => {
-  console.log(req.user, 'REQ.USER_________');
-  const { _id} = req.user;
-  const memoryStrength  = req.params.memoryStrength;
+// router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
+// router.put('/:memoryStrength', (req, res, next) => {
+// console.log(req.user, 'REQ.USER_________');
+//   const { _id} = req.user;
+//   const memoryStrength  = req.params.memoryStrength;
 
-  console.log('MEMORY STRENGTH', memoryStrength);
+//   console.log('MEMORY STRENGTH', memoryStrength);
 
-  User.findById(_id)
-    .then( user => {
-      console.log(user, 'USER+++++');
-      console.log('HEAD++++++++', user.head);
-      let head = user.head;
-      let questionsArray = user.questions;
-      console.log('QUESTIONS ARRAY BEFORE NEXT CHANGES',questionsArray);
-      console.log('MEMORY STRENGTH INSIDE USER CALL', memoryStrength);
+//   User.findById(_id)
+//     .then( user => {
+//       console.log(user, 'USER+++++');
+//       console.log('HEAD++++++++', user.head);
+//       let head = user.head;
+//       let questionsArray = user.questions;
+//       console.log('QUESTIONS ARRAY BEFORE NEXT CHANGES',questionsArray);
+//       console.log('MEMORY STRENGTH INSIDE USER CALL', memoryStrength);
     
-      let currentQuestionNode = questionsArray[head];
-      currentQuestionNode.memoryStrength = memoryStrength;
-      // console.log('CURRENT QUESTION', currentQuestionNode);
-      //console.log('NEXT QUESTION', questionsArray[currentQuestionNode._next])
-      //console.log('CURRENT _NEXT', currentQuestionNode._next);
-      //copy currentQuestionNode to currentNode since currentNode transforms
-      //into target in the while loop below
-      let currentNode = currentQuestionNode;
-      let counter = 0;
-      while(counter < memoryStrength){
-        currentNode = questionsArray[currentNode._next];
-        counter++;
-      }
-      let target = currentNode;
-      console.log('TARGET QUESTION', target);
+//       let currentQuestionNode = questionsArray[head];
+//       currentQuestionNode.memoryStrength = memoryStrength;
+//       // console.log('CURRENT QUESTION', currentQuestionNode);
+//       //console.log('NEXT QUESTION', questionsArray[currentQuestionNode._next])
+//       //console.log('CURRENT _NEXT', currentQuestionNode._next);
+//       //copy currentQuestionNode to currentNode since currentNode transforms
+//       //into target in the while loop below
+//       let currentNode = currentQuestionNode;
+//       let counter = 0;
+//       while(counter < memoryStrength){
+//         currentNode = questionsArray[currentNode._next];
+//         counter++;
+//       }
+//       let target = currentNode;
+//       console.log('TARGET QUESTION', target);
      
 
-      //
-      user.head = currentQuestionNode._next;
-      console.log('NEW HEAD', currentQuestionNode._next);
-      let originalNextInLine =  currentQuestionNode._next;
-      //
-      console.log('CURRENT NODE BEFORE NEXT IS CHANGED', currentQuestionNode);
-      currentQuestionNode._next = target._next;
-      console.log('CURRENT NODE AFTER NEXT IS CHANGED', currentQuestionNode);
+// //
+// user.head = currentQuestionNode._next;
+// console.log('NEW HEAD', currentQuestionNode._next);
+// let originalNextInLine =  currentQuestionNode._next;
+// //
+// console.log('CURRENT NODE BEFORE NEXT IS CHANGED', currentQuestionNode);
+// currentQuestionNode._next = target._next;
+// console.log('CURRENT NODE AFTER NEXT IS CHANGED', currentQuestionNode);
 
-      console.log('NEW CURRENT NODE _NEXT', currentQuestionNode._next);
-      //need if statement to handle when index is larger than length
-      target._next = currentQuestionNode._index;
+// console.log('NEW CURRENT NODE _NEXT', currentQuestionNode._next);
+// //need if statement to handle when index is larger than length
+// target._next = currentQuestionNode._index;
 
-      console.log('NEW TARGET _NEXT', target._next);
+// console.log('NEW TARGET _NEXT', target._next);
   
 
-      // questionsArray.map(question => console.log(question.question, 'INDEX', question._index, 
-      //   'MEMORY STRENGTH', question.memoryStrength,'_NEXT VALUE', question._next));
-      console.log('QUESTIONS ARRAY ', questionsArray);
-      let nextQuestionToDisplay = questionsArray[originalNextInLine];
-      // when done, call a save;
-      //use .then to make sure user saves before sending response
-      user.save()
-        .then(() =>  res.json(nextQuestionToDisplay) );
+// // questionsArray.map(question => console.log(question.question, 'INDEX', question._index, 
+// //   'MEMORY STRENGTH', question.memoryStrength,'_NEXT VALUE', question._next));
+// console.log('QUESTIONS ARRAY ', questionsArray);
+// let nextQuestionToDisplay = questionsArray[originalNextInLine];
+// // when done, call a save;
+// //use .then to make sure user saves before sending response
+// user.save()
+//   .then(() =>  res.json(nextQuestionToDisplay) );
      
-    });
-//add catch blocks
-});
+//     });
+// //add catch blocks
+// });
 
 
 // router.get('/', (req, res) => {
